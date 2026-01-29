@@ -8,9 +8,7 @@ user:'root',
 password:'1Motdepasse',
 database:'battlechallenge',
 port:'3307'
-  
 });
-
 
 async function initializeDatabase() {
   try {
@@ -20,6 +18,28 @@ async function initializeDatabase() {
   } catch (err) {
     console.error("Erreur lors de l'initialisation de la base de données :", err);
   }
+  finally {
+    conn.release(); 
+  }
 }
 
-initializeDatabase();
+//initializeDatabase();
+
+app.get("/", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    try {
+      const [rows] = await conn.query("SELECT * FROM users");
+      res.json(rows);
+    } finally {
+      conn.release(); 
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Database error");
+  }
+});
+
+app.listen(3000, () => {
+  console.log("Serveur démarré sur le port 3000");
+});
