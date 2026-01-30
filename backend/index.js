@@ -2,6 +2,9 @@ const express = require("express");
 const app = express();
 const mariadb = require('mariadb');
 const crypto = require('crypto');
+const cors = require('cors');
+
+app.use(cors());
 app.use(express.json());
 
 
