@@ -25,7 +25,7 @@ button:focus-visible {
 
 .vl {
   border-left: 6px solid green;
-  height: 500px;
+  height: 100%;
   position: absolute;
   left: 50%;
   margin-left: -3px;
@@ -51,4 +51,17 @@ a {
 a:hover {
   text-decoration: underline;
   color: aquamarine;
+}
+.auth-page{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+  gap: 10em;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  width: 300px;
 }

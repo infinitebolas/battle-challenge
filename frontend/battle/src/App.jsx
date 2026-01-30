@@ -1,10 +1,9 @@
-import Header from './Header.jsx';
+// import Header from './Header.jsx'; <Header />
 import Auth from './Auth.jsx';
 
 function App() {
   return (
-    <>
-      <Header/>
+    <> 
       <Auth/>
     </>
   )
