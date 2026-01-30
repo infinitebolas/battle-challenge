@@ -6,6 +6,8 @@ function Header() {
         <ul>
             <li><a href="classement">Classement</a></li>
             <li><a href="defis">Défis</a></li>
+            <li><a href="creation-defi">Création des défis</a></li>
+            <li><a href="deconnexion">Déconnexion</a></li>
         </ul>
       </nav>
     </header>
