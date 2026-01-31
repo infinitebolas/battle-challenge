@@ -4,7 +4,7 @@ const mariadb = require('mariadb');
 const crypto = require('crypto');
 const cors = require('cors');
 
-app.use(cors({origin: 'http://localhost:5173'}));
+app.use(cors({origin: '*'}));
 app.use(express.json());
 
 
@@ -50,24 +50,15 @@ app.post("/auth/register", async (req, res) => {
   try {
     const { username, email, mdp } = req.body;
     const conn = await pool.getConnection();
-    // if (await verifMail(email)) {
-      try {
-        const hash = crypto.createHash('sha256');
-        hash.update(mdp);
-        const digest = hash.digest('hex');
-        await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
-        console.log("user created");
-      } catch (err) {
-        console.error("Erreur lors de la création de l'utilisateur :", err);
-        res.status(500).send("Erreur lors de la création de l'utilisateur");
-      }finally {
-        conn.release(); 
-      }
-    // } else {
-    //   app.get("/auth", (req, res) => {
-    //     res.send(false);
-    //   });
-    // }
+    try {
+      const hash = crypto.createHash('sha256');
+      hash.update(mdp);
+      const digest = hash.digest('hex');
+      await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
+      console.log("user created");
+    }finally {
+      conn.release(); 
+    }
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");

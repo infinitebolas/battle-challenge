@@ -20,28 +20,22 @@ function Auth() {
             throw new Error("Erreur lors de la récupération des données :", error);
         }
     }
-    async function register() {
-        if (!username || !email || !password) {
-            alert("Veuillez remplir tous les champs.");
-            return;
-        }
-        try{
-            await fetch('http://localhost:3000/auth/register', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username,
-                    email: email,
-                    mdp: password
-                })
-            });
-        }
-        catch(error){   
-            alert("Le mail ou le nom d'utilisateur est déjà utilisé.");
-        }
+async function register() { 
+    if (!username || !email || !password) { 
+        alert("Veuillez remplir tous les champs."); 
+        return; 
+    } try{ 
+        await fetch('http://localhost:3000/auth/register', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', }, 
+            body: JSON.stringify({ username: username, email: email, mdp: password }) 
+        });
+            alert("Inscription réussie !"); 
+        } catch(error){ 
+            alert("Le mail ou le nom d'utilisateur est déjà utilisé."); 
+        } 
     }
+
     async function login() {
         try{
             const response = await fetch('http://localhost:3000/classement');
