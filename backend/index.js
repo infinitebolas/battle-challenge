@@ -37,8 +37,6 @@ app.get("/classement", async (req, res) => {
     try {
       const rows = await conn.query("SELECT username, points FROM users ");
       res.json(rows);
-      console.log(rows);
-      console.log(rows.length)
     } finally {
       conn.release(); 
     }
@@ -52,35 +50,44 @@ app.post("/auth/register", async (req, res) => {
   try {
     const { username, email, mdp } = req.body;
     const conn = await pool.getConnection();
-    try {
-      const hash = crypto.createHash('sha256');
-      hash.update(mdp);
-      const digest = hash.digest('hex');
-      await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
-      console.log("user created");
-    } catch (err) {
-      console.error("Erreur lors de la création de l'utilisateur :", err);
-      res.status(500).send("Erreur lors de la création de l'utilisateur");
-    }finally {
-      conn.release(); 
-    }
+    // if (await verifMail(email)) {
+      try {
+        const hash = crypto.createHash('sha256');
+        hash.update(mdp);
+        const digest = hash.digest('hex');
+        await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
+        console.log("user created");
+      } catch (err) {
+        console.error("Erreur lors de la création de l'utilisateur :", err);
+        res.status(500).send("Erreur lors de la création de l'utilisateur");
+      }finally {
+        conn.release(); 
+      }
+    // } else {
+    //   app.get("/auth", (req, res) => {
+    //     res.send(false);
+    //   });
+    // }
   } catch (err) {
     console.error(err);
     res.status(500).send("Database error");
   }
 });
 
-async function Inscription(mail) {
-  let conn;
-  try {
-    conn = await pool.getConnection();
-    return await conn.query("SELECT COUNT(email) FROM users WHERE email = ?", [mail])==0;
-  } finally {
-    conn.release(); 
-  }
-}
-
-//console.log(Inscription());
+// async function verifMail(mail) {
+//   let conn;
+//   try {
+//     conn = await pool.getConnection();
+//     const [rows]= await conn.query("SELECT COUNT(email) AS count FROM users WHERE email = ?", [mail]);
+//     return Number(rows.count) == 0;
+//   } catch (err) {
+//     console.error("Erreur lors de la vérification de l'email :", err);
+//     return false;
+//   }
+//   finally {
+//     if (conn) conn.release(); 
+//   }
+// }
 
 
 app.listen(3000, () => {

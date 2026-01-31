@@ -4,6 +4,8 @@ function Auth() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [usernameLogin, getUsername] = useState("");
+    const [passwordLogin, getPassword] = useState("")
 
     async function fetchMessage() {
         try{
@@ -37,14 +39,30 @@ function Auth() {
             });
         }
         catch(error){   
-            throw new Error("Erreur lors de l'enregistrement de l'utilisateur :", error);
-        }}
+            alert("Le mail ou le nom d'utilisateur est déjà utilisé.");
+        }
+    }
+    async function login() {
+        try{
+            const response = await fetch('http://localhost:3000/classement');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setMessage(data);
+        }
+        catch(error){
+            throw new Error("Erreur lors de la récupération des données :", error);
+        }   
+    }
+
+
   return (
     <div className="auth-page">
         <div className="login">
             <form action="post">
-                <input type="text" placeholder="Username" />
-                <input type="password" placeholder="Password" />
+                <input type="text" placeholder="Username" value={usernameLogin} onChange={(e) => getUsername(e.target.value)}/>
+                <input type="password" placeholder="Password" value={passwordLogin} onChange={(e) => getPassword(e.target.value)}/>
                 <button type="submit">Login</button>
             </form>
             {/* <button onClick={()=>fetchMessage()}>Fetch Classement</button>
