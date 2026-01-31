@@ -65,6 +65,27 @@ app.post("/auth/register", async (req, res) => {
   }
 });
 
+app.post("/auth/login",async (req,res) => {
+  try{
+    let test=false;
+    const {username, mdp} = req.body;
+    const conn = await pool.getConnection();
+    try{
+      const hash = crypto.createHash('sha256').update(mdp).digest('hex');
+      const [verif] = await conn.query("SELECT mdp FROM users WHERE username=?",[username]);
+      console.log(verif.mdp);
+      if(hash==verif.mdp){
+        test=true;
+      }
+      res.send(test);
+    } finally{
+      conn.release();
+    }
+  }
+  catch{
+    res.status(500).send("Database error");
+  }
+})
 // async function verifMail(mail) {
 //   let conn;
 //   try {

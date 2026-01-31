@@ -37,24 +37,29 @@ async function register() {
     }
 
     async function login() {
-        try{
-            const response = await fetch('http://localhost:3000/classement');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setMessage(data);
+        if (!usernameLogin || !passwordLogin) { 
+            alert("Veuillez remplir tous les champs."); 
+            return;
         }
-        catch(error){
-            throw new Error("Erreur lors de la récupération des données :", error);
-        }   
+        try{
+            const response = await fetch('http://localhost:3000/auth/login',{
+                method: 'POST', 
+                headers: { 'Content-Type': 'application/json', }, 
+                body: JSON.stringify({ usernameLogin: username,  mdp: passwordLogin }) 
+        });  
+
+        const data = await response.json();
+        console.log(data)
+        }catch (error){
+            alert("pas de connexion");
+        };
     }
 
 
   return (
     <div className="auth-page">
         <div className="login">
-            <form action="post">
+            <form onSubmit={login}>
                 <input type="text" placeholder="Username" value={usernameLogin} onChange={(e) => getUsername(e.target.value)}/>
                 <input type="password" placeholder="Password" value={passwordLogin} onChange={(e) => getPassword(e.target.value)}/>
                 <button type="submit">Login</button>
