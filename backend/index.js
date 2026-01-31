@@ -4,7 +4,7 @@ const mariadb = require('mariadb');
 const crypto = require('crypto');
 const cors = require('cors');
 
-app.use(cors());
+app.use(cors({origin: 'http://localhost:5173'}));
 app.use(express.json());
 
 
@@ -19,7 +19,7 @@ port:'3307'
 async function initializeDatabase() {
   try {
     const conn = await pool.getConnection();
-    const rows = await conn.query("INSERT INTO users(username,email,mdp,points) VALUES ('test','test@mail','123',45) ");
+    await conn.query("INSERT INTO users(username,email,mdp,points) VALUES ('test','test@mail','123',45) ");
     console.log("Base de données initialisée");
   } catch (err) {
     console.error("Erreur lors de l'initialisation de la base de données :", err);
@@ -35,8 +35,9 @@ app.get("/classement", async (req, res) => {
   try {
     const conn = await pool.getConnection();
     try {
-      const [rows] = await conn.query("SELECT username, points FROM users ORDER BY points DESC");
+      const [rows] = await conn.query("SELECT username, points FROM users ");
       res.json(rows);
+      console.log('Classement envoyé');
     } finally {
       conn.release(); 
     }
@@ -46,7 +47,7 @@ app.get("/classement", async (req, res) => {
   }
 });
 
-app.post("/auth", async (req, res) => {
+app.post("/auth/register", async (req, res) => {
   try {
     const { username, email, mdp } = req.body;
     const conn = await pool.getConnection();
@@ -54,11 +55,13 @@ app.post("/auth", async (req, res) => {
       const hash = crypto.createHash('sha256');
       hash.update(mdp);
       const digest = hash.digest('hex');
-      const rows = await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
+      await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
       console.log("user created");
     } catch (err) {
       console.error("Erreur lors de la création de l'utilisateur :", err);
       res.status(500).send("Erreur lors de la création de l'utilisateur");
+    }finally {
+      conn.release(); 
     }
   } catch (err) {
     console.error(err);
@@ -66,11 +69,17 @@ app.post("/auth", async (req, res) => {
   }
 });
 
+async function Inscription(mail) {
+  let conn;
+  try {
+    conn = await pool.getConnection();
+    return await conn.query("SELECT COUNT(email) FROM users WHERE email = ?", [mail])==0;
+  } finally {
+    conn.release(); 
+  }
+}
 
-
-
-
-
+//console.log(Inscription());
 
 
 app.listen(3000, () => {
