@@ -1,20 +1,44 @@
 import { useState } from 'react';
 function Auth() {
     const [message, setMessage] = useState({});
+    const [username, setUsername] = useState("");
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     async function fetchMessage() {
-    try{
-        const response = await fetch('http://localhost:3000/classement');
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+        try{
+            const response = await fetch('http://localhost:3000/classement');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            setMessage(data);
         }
-        const data = await response.json();
-        setMessage(data);
+        catch(error){
+            throw new Error("Erreur lors de la récupération des données :", error);
+        }
     }
-    catch(error){
-        throw new Error("Erreur lors de la récupération des données :", error);
-    }
-  }
+    async function register() {
+        if (!username || !email || !password) {
+            alert("Veuillez remplir tous les champs.");
+            return;
+        }
+        try{
+            await fetch('http://localhost:3000/auth/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    email: email,
+                    mdp: password
+                })
+            });
+        }
+        catch(error){   
+            throw new Error("Erreur lors de l'enregistrement de l'utilisateur :", error);
+        }}
   return (
     <div className="auth-page">
         <div className="login">
@@ -23,21 +47,23 @@ function Auth() {
                 <input type="password" placeholder="Password" />
                 <button type="submit">Login</button>
             </form>
-            <button onClick={()=>fetchMessage()}>Fetch Classement</button>
+            {/* <button onClick={()=>fetchMessage()}>Fetch Classement</button>
             <div>
                 {JSON.stringify(message)}
             </div>
+            */}
         </div>
         <div className="vl"></div>
         <div className="register">
-            <form action="post">
-                <input type="text" placeholder="Username" />
-                <input type="email" placeholder="Email" />
-                <input type="password" placeholder="Password" />
+            <form onSubmit={register}>
+                <input type="text" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+                <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)}/>
+                <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)}/>
                 <button type="submit">Register</button>
             </form>
         </div>
     </div>
-  );
+    );
+
 }
 export default Auth;
