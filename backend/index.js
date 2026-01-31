@@ -35,9 +35,10 @@ app.get("/classement", async (req, res) => {
   try {
     const conn = await pool.getConnection();
     try {
-      const [rows] = await conn.query("SELECT username, points FROM users ");
+      const rows = await conn.query("SELECT username, points FROM users ");
       res.json(rows);
-      console.log('Classement envoyé');
+      console.log(rows);
+      console.log(rows.length)
     } finally {
       conn.release(); 
     }
