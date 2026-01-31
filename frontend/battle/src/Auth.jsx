@@ -24,6 +24,9 @@ function Auth() {
                 <button type="submit">Login</button>
             </form>
             <button onClick={()=>fetchMessage()}>Fetch Classement</button>
+            <div>
+                {JSON.stringify(message)}
+            </div>
         </div>
         <div className="vl"></div>
         <div className="register">
