@@ -1,12 +1,14 @@
-// import Header from './Header.jsx'; <Header />
-import Auth from './Auth.jsx';
+import Header from './Header.jsx'; <Header />
+//import Auth from './Auth.jsx';
+import Classement from './Classement.jsx';
 
 function App() {
 
   return (
     
     <> 
-      <Auth/>
+      <Header/>
+      <Classement/>
     </>
   )
   }

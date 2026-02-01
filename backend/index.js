@@ -45,7 +45,7 @@ app.get("/classement", async (req, res) => {
   try {
     const conn = await pool.getConnection();
     try {
-      const rows = await conn.query("SELECT username, points FROM users ORDER BY DESC");
+      const rows = await conn.query("SELECT username, points FROM users ORDER BY points DESC LIMIT 10");
       res.json(rows);
     } finally {
       conn.release(); 
