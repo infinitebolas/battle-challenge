@@ -4,7 +4,11 @@ const mariadb = require('mariadb');
 const crypto = require('crypto');
 const cors = require('cors');
 
-app.use(cors({origin: '*'}));
+app.use(cors({
+  origin: '*',
+  methods:["POST","GET"],
+credentials: false
+}));
 app.use(express.json());
 
 
@@ -29,39 +33,64 @@ async function initializeDatabase() {
   }
 }
 
+// async function verifyUser(info){
+//   try{
+//     const conn = await pool.getConnection()
+//   }
+// }
+
 //initializeDatabase();
 
 app.get("/classement", async (req, res) => {
   try {
     const conn = await pool.getConnection();
     try {
-      const rows = await conn.query("SELECT username, points FROM users ");
+      const rows = await conn.query("SELECT username, points FROM users ORDER BY DESC");
       res.json(rows);
     } finally {
       conn.release(); 
     }
   } catch (err) {
     console.error(err);
-    res.status(500).send("Database error");
+    res.status(500).json("Database error");
   }
 });
 
 app.post("/auth/register", async (req, res) => {
+  const { username, email, mdp } = req.body;
+
+  if (!username || !email || !mdp) {
+    return res.status(400).json({ success: false, message: "Champs manquants" });
+  }
+
+  let conn;
+
   try {
-    const { username, email, mdp } = req.body;
-    const conn = await pool.getConnection();
+    conn = await pool.getConnection();
+
+    const hash = crypto.createHash('sha256').update(mdp).digest('hex');
+
     try {
-      const hash = crypto.createHash('sha256');
-      hash.update(mdp);
-      const digest = hash.digest('hex');
-      await conn.query("INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0) ", [username, email, digest]);
-      console.log("user created");
-    }finally {
-      conn.release(); 
+      await conn.query(
+        "INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0)",
+        [username, email, hash]
+      );
+
+      console.log("User created:", username);
+      return res.status(200).json({ success: true, message:'Utilisateur créé' });
+
+    } catch (err) {
+      if (err.code === 'ER_DUP_ENTRY') {
+        res.status(409).json({success: false, message: "User or email already exists"});
+      }
+      throw err;
     }
+
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Database error");
+    console.error("Database error:", err);
+    return res.status(500).json({success: false, message: "Database error"});
+  } finally {
+    if (conn) conn.release();
   }
 });
 
@@ -76,14 +105,13 @@ app.post("/auth/login",async (req,res) => {
       if(hash==verif.mdp){
         test=true;
       }
-      res.send({success:test});
-      console.log(test)
+      res.json({success:test});
     } finally{
       conn.release();
     }
   }
   catch{
-    res.status(500).send("Database error");
+    res.status(500).json("Database error");
   }
 })
 // async function verifMail(mail) {

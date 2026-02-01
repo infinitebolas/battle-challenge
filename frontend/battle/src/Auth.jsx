@@ -6,41 +6,47 @@ function Auth() {
     const [password, setPassword] = useState("");
     const [usernameLogin, getUsername] = useState("");
     const [passwordLogin, getPassword] = useState("")
+async function register() {
+    if (!username || !email || !password) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
 
-    async function fetchMessage() {
-        try{
-            const response = await fetch('http://localhost:3000/classement');
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            setMessage(data);
-        }
-        catch(error){
-            throw new Error("Erreur lors de la récupération des données :", error);
-        }
-    }
-async function register() { 
-    if (!username || !email || !password) { 
-        alert("Veuillez remplir tous les champs."); 
-        return; 
-    } try{ 
-        await fetch('http://localhost:3000/auth/register', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json', }, 
-            body: JSON.stringify({ username: username, email: email, mdp: password }) 
-        });
-            alert("Inscription réussie !"); 
-        } catch(error){ 
-            alert("Le mail ou le nom d'utilisateur est déjà utilisé."); 
-        } 
-    }
+    try {
+      const response = await fetch("http://localhost:3000/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username:username, email:email, mdp: password }),
+      });
+
+ let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = { success: false, message: "Réponse serveur invalide" };
+      }
+
+      if (response.ok) {
+        alert(data.message || "Inscription réussie !");
+        setUsername("");
+        setEmail("");
+        setPassword("");
+      } else {
+        alert(data.message || "Erreur lors de l'inscription.");
+      }
+
+    } catch (error) {
+      console.error("Fetch error:", error);
+      alert("Impossible de se connecter au serveur. Vérifiez qu'il est démarré et que le CORS est configuré.");
+    } 
+  };
 
     async function login() {
         if (!usernameLogin || !passwordLogin) { 
             alert("Veuillez remplir tous les champs."); 
             return;
         }
+        try{
         await fetch('http://localhost:3000/auth/login',{
             method: 'POST', 
             headers: { 'Content-Type': 'application/json', }, 
@@ -55,10 +61,11 @@ async function register() {
                 alert('mauvais mot de passe');
             }
         }) 
-        .catch (error => {
-            console.log(error)
-                alert(error);
-            })
+    }
+        catch (error) {
+            console.error(error)
+                alert('Erreur de connexion');
+            }
     }
 
 
@@ -87,6 +94,7 @@ async function register() {
         </div>
     </div>
     );
+
 
 }
 export default Auth;
