@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
+
 function Auth() {
     const [message, setMessage] = useState({});
     const [username, setUsername] = useState("");
