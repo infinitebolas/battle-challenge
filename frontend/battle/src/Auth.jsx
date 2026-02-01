@@ -41,18 +41,24 @@ async function register() {
             alert("Veuillez remplir tous les champs."); 
             return;
         }
-        try{
-            const response = await fetch('http://localhost:3000/auth/login',{
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json', }, 
-                body: JSON.stringify({ usernameLogin: username,  mdp: passwordLogin }) 
-        });  
-
-        const data = await response.json();
-        console.log(data)
-        }catch (error){
-            alert("pas de connexion");
-        };
+        await fetch('http://localhost:3000/auth/login',{
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json', }, 
+            body: JSON.stringify({ username: usernameLogin,  mdp: passwordLogin }) 
+        })
+        .then(response => response.json())
+        .then(data=>{
+            if(data.success){
+                alert('authentification réussie');
+            }
+            else{
+                alert('mauvais mot de passe');
+            }
+        }) 
+        .catch (error => {
+            console.log(error)
+                alert(error);
+            })
     }
 
 
