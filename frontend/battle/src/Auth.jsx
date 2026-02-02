@@ -8,7 +8,8 @@ function Auth() {
     const [password, setPassword] = useState("");
     const [usernameLogin, getUsername] = useState("");
     const [passwordLogin, getPassword] = useState("")
-async function register() {
+async function register(event) {
+    event.preventDefault();
     if (!username || !email || !password) {
       alert("Veuillez remplir tous les champs.");
       return;

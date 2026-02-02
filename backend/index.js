@@ -115,6 +115,38 @@ app.post("/auth/login",async (req,res) => {
     res.status(500).json("Database error");
   }
 })
+
+app.post("/creation", async (req, res) => {
+  try {
+    const { titre, contenu, difficulte, points } = req.body;
+
+    const conn = await pool.getConnection();
+
+    try {
+      await conn.query(
+        "INSERT INTO challenge(titre, contenu, difficulte, points) VALUES (?,?,?,?)",
+        [titre, contenu, difficulte, points]
+      );
+
+      res.status(200).json({
+        success: true,
+        message: "Défi créé"
+      });
+
+    } finally {
+      conn.release();
+    }
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Erreur base de données"
+    });
+  }
+});
+
 // async function verifMail(mail) {
 //   let conn;
 //   try {

@@ -1,19 +1,71 @@
-import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 function Creation() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [difficulty, setDifficulty] = useState("EASY");
-
+  const navigate = useNavigate()
   const resetForm = () => {
     setTitle("");
     setContent("");
     setDifficulty("EASY");
   };
+  async function defi(event) {
+    event.preventDefault()
+  if (!title || !content) {
+    alert("Veuillez remplir tous les champs.");
+    return;
+  }
+
+  try {
+    let points;
+
+    switch (difficulty) {
+      case "MEDIUM":
+        points = 30;
+        break;
+      case "HARD":
+        points = 50;
+        break;
+      default:
+        points = 10;
+    }
+
+    const response = await fetch('http://localhost:3000/creation', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        titre: title,
+        contenu: content,
+        difficulte: difficulty,
+        points: points
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert('Défi enregistré');
+      
+      navigate('/defis');
+    } else {
+      alert("Erreur lors de l'enregistrement");
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert('Erreur de connexion');
+  }
+}
+
+  
+
 
   return (
     <div className="defi">
-      <form>
+      <form onSubmit={defi}>
         <h3>Créer un défi</h3>
         <input type="text" placeholder="Titre du défi" value={title} onChange={(e) => setTitle(e.target.value)}/>
         <p>Choisir la difficulté</p>
@@ -27,7 +79,7 @@ function Creation() {
         <button type="button" onClick={resetForm}>
           Réinitialiser
         </button>
-        <Link to="/defis"><button className="publier" type="submit">Publier</button></Link>
+        <button className="publier" type="submit">Publier</button>
       </form>
     </div>
   );
