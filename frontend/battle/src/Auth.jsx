@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Auth() {
     const [message, setMessage] = useState({});
@@ -8,6 +8,7 @@ function Auth() {
     const [password, setPassword] = useState("");
     const [usernameLogin, getUsername] = useState("");
     const [passwordLogin, getPassword] = useState("")
+    const navigate = useNavigate()
 async function register(event) {
     event.preventDefault();
     if (!username || !email || !password) {
@@ -71,8 +72,7 @@ async function login(event) {
 
     if (data.success) {
       alert('Authentification réussie');
-      // Exemple si tu veux rediriger :
-      // navigate('/accueil');
+      navigate('/');
     } else {
       alert(data.message || 'Identifiants incorrects');
     }
