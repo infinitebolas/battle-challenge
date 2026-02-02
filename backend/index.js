@@ -69,11 +69,12 @@ app.post("/auth/register", async (req, res) => {
     conn = await pool.getConnection();
 
     const hash = crypto.createHash('sha256').update(mdp).digest('hex');
+    const emailhash = crypto.createHash('sha256').update(email).digest('hex');
 
     try {
       await conn.query(
         "INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0)",
-        [username, email, hash]
+        [username, emailhash, hash]
       );
 
       console.log("User created:", username);

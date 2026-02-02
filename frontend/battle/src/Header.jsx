@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 function Header() {
   return (
     <header className="header">
-      <h3><Link to='/'>Battle Challenge</Link></h3>
       <nav>
         <ul>
           <li><Link to='/'>Accueil</Link></li>
