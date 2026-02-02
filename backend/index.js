@@ -60,89 +60,104 @@ app.post("/auth/register", async (req, res) => {
   const { username, email, mdp } = req.body;
 
   if (!username || !email || !mdp) {
-    return res.status(400).json({ success: false, message: "Champs manquants" });
+    return res.status(400).json({
+      success: false,
+      message: "Champs manquants"
+    });
   }
-
   let conn;
-
   try {
     conn = await pool.getConnection();
-
     const hash = crypto.createHash('sha256').update(mdp).digest('hex');
-    const emailhash = crypto.createHash('sha256').update(email).digest('hex');
-
     try {
       await conn.query(
         "INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0)",
-        [username, emailhash, hash]
+        [username, email, hash]
       );
-
       console.log("User created:", username);
-      return res.status(200).json({ success: true, message:'Utilisateur créé' });
-
+      return res.status(200).json({success: true, message: "Utilisateur créé"});
     } catch (err) {
       if (err.code === 'ER_DUP_ENTRY') {
-        res.status(409).json({success: false, message: "User or email already exists"});
+        return res.status(409).json({
+          success: false,
+          message: "User or email already exists"
+        });
       }
       throw err;
     }
-
   } catch (err) {
     console.error("Database error:", err);
-    return res.status(500).json({success: false, message: "Database error"});
+    return res.status(500).json({success: false, message: "Database error"
+    });
   } finally {
     if (conn) conn.release();
   }
 });
 
-app.post("/auth/login",async (req,res) => {
-  try{
-    const {username, mdp} = req.body;
+
+app.post("/auth/login", async (req, res) => {
+  try {
+    const { username, mdp } = req.body;
+    if (!username || !mdp) {
+      return res.status(400).json({
+        success: false,
+        message: "Champs manquants"
+      });
+    }
     const conn = await pool.getConnection();
-    try{    
-      let test=false;
+    try {
       const hash = crypto.createHash('sha256').update(mdp).digest('hex');
-      const [verif] = await conn.query("SELECT mdp FROM users WHERE username=?",[username]);
-      if(hash==verif.mdp){
-        test=true;
+      const [rows] = await conn.query(
+        "SELECT mdp FROM users WHERE username = ?",
+        [username]
+      );
+      // Utilisateur inexistant
+      if (rows.length === 0) {
+        return res.status(401).json({
+          success: false,
+          message: "Utilisateur non trouvé"
+        });
       }
-      res.json({success:test});
-    } finally{
+      const mdpStocke = rows.mdp;
+      if (hash === mdpStocke) {
+        return res.json({
+          success: true,
+          message: "Connexion réussie"
+        });
+      } else {
+        return res.status(401).json({
+          success: false,
+          message: "Mot de passe incorrect"
+        });
+      }
+    } finally {
       conn.release();
     }
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Database error"
+    });
   }
-  catch{
-    res.status(500).json("Database error");
-  }
-})
+});
 
 app.post("/creation", async (req, res) => {
   try {
     const { titre, contenu, difficulte, points } = req.body;
-
     const conn = await pool.getConnection();
-
     try {
       await conn.query(
         "INSERT INTO challenge(titre, contenu, difficulte, points) VALUES (?,?,?,?)",
         [titre, contenu, difficulte, points]
       );
-
-      res.status(200).json({
-        success: true,
-        message: "Défi créé"
-      });
-
+      res.status(200).json({success: true, message: "Défi créé"});
     } finally {
       conn.release();
     }
-
   } catch (error) {
     console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Erreur base de données"
+    res.status(500).json({success: false, message: "Erreur base de données"
     });
   }
 });

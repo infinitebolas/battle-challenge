@@ -44,32 +44,44 @@ async function register(event) {
     } 
   };
 
-    async function login() {
-        if (!usernameLogin || !passwordLogin) { 
-            alert("Veuillez remplir tous les champs."); 
-            return;
-        }
-        try{
-        await fetch('http://localhost:3000/auth/login',{
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json', }, 
-            body: JSON.stringify({ username: usernameLogin,  mdp: passwordLogin }) 
-        })
-        .then(response => response.json())
-        .then(data=>{
-            if(data.success){
-                alert('authentification réussie');
-            }
-            else{
-                alert('mauvais mot de passe');
-            }
-        }) 
+async function login(event) {
+  event.preventDefault();
+
+  if (!usernameLogin || !passwordLogin) {
+    alert("Veuillez remplir tous les champs.");
+    return;
+  }
+
+  try {
+    const response = await fetch('http://localhost:3000/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        username: usernameLogin,
+        mdp: passwordLogin
+      })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Erreur d'authentification");
+      return;
     }
-        catch (error) {
-            console.error(error)
-                alert('Erreur de connexion');
-            }
+
+    if (data.success) {
+      alert('Authentification réussie');
+      // Exemple si tu veux rediriger :
+      // navigate('/accueil');
+    } else {
+      alert(data.message || 'Identifiants incorrects');
     }
+
+  } catch (error) {
+    console.error(error);
+    alert('Erreur de connexion');
+  }
+}
 
 
   return (
