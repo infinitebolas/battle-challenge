@@ -1,18 +1,18 @@
-const express = require("express");
+import express, { json } from "express";
 const app = express();
-const mariadb = require('mariadb');
-const crypto = require('crypto');
-const cors = require('cors');
+import { createPool } from 'mariadb';
+import { createHash } from 'crypto';
+import cors from 'cors';
 
 app.use(cors({
   origin: '*',
   methods:["POST","GET"],
 credentials: false
 }));
-app.use(express.json());
+app.use(json());
 
 
-const pool = mariadb.createPool({
+const pool = createPool({
 host:'localhost',
 user:'root',
 password:'1Motdepasse',
@@ -68,7 +68,7 @@ app.post("/auth/register", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const hash = crypto.createHash('sha256').update(mdp).digest('hex');
+    const hash = createHash('sha256').update(mdp).digest('hex');
     try {
       await conn.query(
         "INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0)",
@@ -106,7 +106,7 @@ app.post("/auth/login", async (req, res) => {
     }
     const conn = await pool.getConnection();
     try {
-      const hash = crypto.createHash('sha256').update(mdp).digest('hex');
+      const hash = createHash('sha256').update(mdp).digest('hex');
       const [rows] = await conn.query(
         "SELECT mdp FROM users WHERE username = ?",
         [username]
