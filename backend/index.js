@@ -163,8 +163,6 @@ app.post("/auth/login", async (req, res) => {
         JWT_SECRET,
         { expiresIn: JWT_EXPIRES_IN }
       );
-      console.log(token);
-
       res.json({
         success: true,
         message: "Connexion réussie !",
@@ -207,22 +205,6 @@ app.post("/creation", async (req, res) => {
     });
   }
 });
-
-
-// async function verifMail(mail) {
-//   let conn;
-//   try {
-//     conn = await pool.getConnection();
-//     const [rows]= await conn.query("SELECT COUNT(email) AS count FROM users WHERE email = ?", [mail]);
-//     return Number(rows.count) == 0;
-//   } catch (err) {
-//     console.error("Erreur lors de la vérification de l'email :", err);
-//     return false;
-//   }
-//   finally {
-//     if (conn) conn.release(); 
-//   }
-// }
 
 
 app.listen(3000, () => {

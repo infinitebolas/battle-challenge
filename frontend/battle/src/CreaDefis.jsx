@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import useToken from './token';
 function Creation() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -10,9 +11,9 @@ function Creation() {
     setContent("");
     setDifficulty("EASY");
   };
+  const token =  useToken(state => state.token)
   async function defi(event) {
     event.preventDefault()
-    const token = localStorage.getItem("token");
     if (!title || !content) {
       alert("Veuillez remplir tous les champs.");
       return;
@@ -31,7 +32,6 @@ function Creation() {
         default:
           points = 10;
       }
-    console.log(token);
     const response = await fetch('http://localhost:3000/creation', {
       method: 'POST',
       headers: {

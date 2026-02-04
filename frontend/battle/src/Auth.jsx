@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import useToken from './token';
 function Auth() {
     const [message, setMessage] = useState({});
     const [username, setUsername] = useState("");
@@ -8,6 +8,7 @@ function Auth() {
     const [password, setPassword] = useState("");
     const [usernameLogin, getUsername] = useState("");
     const [passwordLogin, getPassword] = useState("")
+    const setToken = useToken((state) => state.setToken);
     const navigate = useNavigate()
 
 
@@ -49,12 +50,13 @@ async function register(event) {
 
 async function login(event) {
   event.preventDefault();
-
+  
+  
   if (!usernameLogin || !passwordLogin) {
     alert("Veuillez remplir tous les champs.");
     return;
   }
-
+  
   try {
     const response = await fetch('http://localhost:3000/auth/login', {
       method: 'POST',
@@ -73,9 +75,10 @@ async function login(event) {
     }
 
     if (data.success) {
-      // 🔐 ICI on récupère et stocke le token
       if (data.token) {
-        localStorage.setItem("token", data.token);      
+        console.log(data.token)
+        setToken(data.token);
+        //localStorage.setItem("token", data.token);      
         alert('Authentification réussie');
         navigate('/');
       }

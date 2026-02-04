@@ -1,12 +1,17 @@
 import { Link } from 'react-router-dom';
-import { useState } from 'react';
+import useToken from './token';
+import { useNavigate } from 'react-router-dom';
 function Header() {
-  const [token, getToken] = useState(localStorage.getItem("token"));
+  const navigate = useNavigate();
+  const token = useToken(state => state.token);
+  const clearToken = useToken((state) => state.clearToken);
+    //const token = localStorage.getItem("token");
     let connexion;    
     const logout = () => {
-    localStorage.removeItem("token");
+    clearToken();
     alert("Déconnexion réussie");
-    navigate("/login");
+    navigate("/auth");
+  
   }
     if (!token){
       connexion = <Link to='/auth'>Connexion</Link>
