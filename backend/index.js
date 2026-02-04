@@ -46,7 +46,7 @@ const verifyToken = (req, res, next) => {
     });
 };
 app.use("/creation",verifyToken);
-
+app.use("/defis",verifyToken);
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
@@ -130,7 +130,7 @@ app.post("/auth/login", async (req, res) => {
 
     try {
       const [rows] = await conn.query(
-        "SELECT id_user, username, mdp FROM users WHERE username = ?",
+        "SELECT * FROM users WHERE username = ?",
         [username]
       );
 
@@ -158,7 +158,8 @@ app.post("/auth/login", async (req, res) => {
       const token = jwt.sign(
         {
           id: user.id_user,
-          username: user.username
+          username: user.username,
+          points:user.points
         },
         JWT_SECRET,
         { expiresIn: JWT_EXPIRES_IN }
@@ -169,7 +170,8 @@ app.post("/auth/login", async (req, res) => {
         token,
         user: {
           id: user.id_user,
-          username: user.username
+          username: user.username,
+          points:user.points
         }
       });
 
