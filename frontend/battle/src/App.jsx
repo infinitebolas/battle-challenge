@@ -18,7 +18,7 @@ function App() {
         <Route path='/auth' element={<Auth/>}></Route>
         <Route path='/classement' element={<Classement/>}></Route>
         <Route path='/defis' element={<Defis/>}></Route>
-        <Route path='/creation-defi' element={<CreaDefis/>}></Route>
+        <Route path='/creation' element={<CreaDefis/>}></Route>
       </Routes>
     </BrowserRouter>
   )

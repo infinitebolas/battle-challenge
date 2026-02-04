@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 function Accueil() {
   return (
     <div>
-        <h1>Bienvenue sur la plateforme de bataille</h1>
+        <h1>Bienvenue sur la plateforme de bataille, ACCUEIL</h1>
     </div>
   );
 }

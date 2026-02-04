@@ -9,6 +9,8 @@ function Auth() {
     const [usernameLogin, getUsername] = useState("");
     const [passwordLogin, getPassword] = useState("")
     const navigate = useNavigate()
+
+
 async function register(event) {
     event.preventDefault();
     if (!username || !email || !password) {
@@ -71,8 +73,12 @@ async function login(event) {
     }
 
     if (data.success) {
-      alert('Authentification réussie');
-      navigate('/');
+      // 🔐 ICI on récupère et stocke le token
+      if (data.token) {
+        localStorage.setItem("token", data.token);      
+        alert('Authentification réussie');
+        navigate('/');
+      }
     } else {
       alert(data.message || 'Identifiants incorrects');
     }
@@ -82,6 +88,7 @@ async function login(event) {
     alert('Erreur de connexion');
   }
 }
+
 
 
   return (

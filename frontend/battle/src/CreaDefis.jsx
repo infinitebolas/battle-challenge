@@ -12,29 +12,31 @@ function Creation() {
   };
   async function defi(event) {
     event.preventDefault()
-  if (!title || !content) {
-    alert("Veuillez remplir tous les champs.");
-    return;
-  }
-
-  try {
-    let points;
-
-    switch (difficulty) {
-      case "MEDIUM":
-        points = 30;
-        break;
-      case "HARD":
-        points = 50;
-        break;
-      default:
-        points = 10;
+    const token = localStorage.getItem("token");
+    if (!title || !content) {
+      alert("Veuillez remplir tous les champs.");
+      return;
     }
 
+    try {
+      let points;
+
+      switch (difficulty) {
+        case "MEDIUM":
+          points = 30;
+          break;
+        case "HARD":
+          points = 50;
+          break;
+        default:
+          points = 10;
+      }
+    console.log(token);
     const response = await fetch('http://localhost:3000/creation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        "Authorization": `Bearer ${token}`
       },
       body: JSON.stringify({
         titre: title,

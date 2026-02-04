@@ -1,8 +1,11 @@
 import express, { json } from "express";
 const app = express();
 import { createPool } from 'mariadb';
-import { createHash } from 'crypto';
+import bcrypt from 'bcrypt';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+dotenv.config();
 
 app.use(cors({
   origin: '*',
@@ -10,6 +13,42 @@ app.use(cors({
 credentials: false
 }));
 app.use(json());
+
+const verifyToken = (req, res, next) => {
+    const authHeader = req.headers['authorization'];
+    
+    // Format attendu: "Bearer "
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) {
+        return res.status(401).json({ 
+            success: false,
+            message: '🚫 Accès refusé - Token manquant',
+            hint: 'Ajoutez le header: Authorization: Bearer '
+        });
+    }
+
+    jwt.verify(token, JWT_SECRET, (err, decoded) => {
+        if (err) {
+            const message = err.name === 'TokenExpiredError' 
+
+                ? ' Token expiré' 
+                : ' Token invalide';
+            
+            return res.status(403).json({ 
+                success: false,
+                message,
+                error: err.message
+            });
+        }
+        
+        req.user = decoded;
+        next(); // Passer au handler suivant
+    });
+};
+app.use("/creation",verifyToken);
+
+const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
 
 const pool = createPool({
@@ -20,26 +59,7 @@ database:'battlechallenge',
 port:'3307'
 });
 
-async function initializeDatabase() {
-  try {
-    const conn = await pool.getConnection();
-    await conn.query("INSERT INTO users(username,email,mdp,points) VALUES ('test','test@mail','123',45) ");
-    console.log("Base de données initialisée");
-  } catch (err) {
-    console.error("Erreur lors de l'initialisation de la base de données :", err);
-  }
-  finally {
-    conn.release(); 
-  }
-}
 
-// async function verifyUser(info){
-//   try{
-//     const conn = await pool.getConnection()
-//   }
-// }
-
-//initializeDatabase();
 
 app.get("/classement", async (req, res) => {
   try {
@@ -68,7 +88,7 @@ app.post("/auth/register", async (req, res) => {
   let conn;
   try {
     conn = await pool.getConnection();
-    const hash = createHash('sha256').update(mdp).digest('hex');
+    const hash = await bcrypt.hash(mdp, 10);;
     try {
       await conn.query(
         "INSERT INTO users(username,email,mdp,points) VALUES (?,?,?,0)",
@@ -98,46 +118,72 @@ app.post("/auth/register", async (req, res) => {
 app.post("/auth/login", async (req, res) => {
   try {
     const { username, mdp } = req.body;
+
     if (!username || !mdp) {
       return res.status(400).json({
         success: false,
         message: "Champs manquants"
       });
     }
+
     const conn = await pool.getConnection();
+
     try {
-      const hash = createHash('sha256').update(mdp).digest('hex');
       const [rows] = await conn.query(
-        "SELECT mdp FROM users WHERE username = ?",
+        "SELECT id_user, username, mdp FROM users WHERE username = ?",
         [username]
       );
-      // Utilisateur inexistant
+
+      // Vérification utilisateur
       if (rows.length === 0) {
         return res.status(401).json({
           success: false,
           message: "Utilisateur non trouvé"
         });
       }
-      const mdpStocke = rows.mdp;
-      if (hash === mdpStocke) {
-        return res.json({
-          success: true,
-          message: "Connexion réussie"
-        });
-      } else {
+
+      const user = rows;
+
+      // Comparaison du mot de passe avec bcrypt
+      const passwordMatch = await bcrypt.compare(mdp, user.mdp);
+
+      if (!passwordMatch) {
         return res.status(401).json({
           success: false,
           message: "Mot de passe incorrect"
         });
       }
+
+      // Création du token JWT
+      const token = jwt.sign(
+        {
+          id: user.id_user,
+          username: user.username
+        },
+        JWT_SECRET,
+        { expiresIn: JWT_EXPIRES_IN }
+      );
+      console.log(token);
+
+      res.json({
+        success: true,
+        message: "Connexion réussie !",
+        token,
+        user: {
+          id: user.id_user,
+          username: user.username
+        }
+      });
+
     } finally {
       conn.release();
     }
+
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({
       success: false,
-      message: "Database error"
+      message: "Erreur serveur"
     });
   }
 });
@@ -161,6 +207,7 @@ app.post("/creation", async (req, res) => {
     });
   }
 });
+
 
 // async function verifMail(mail) {
 //   let conn;
