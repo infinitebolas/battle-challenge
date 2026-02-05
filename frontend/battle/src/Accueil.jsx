@@ -27,6 +27,7 @@ useEffect(() => {
         setPoints(result.value);
       } catch (err) {
         setError(err.message);
+        alert(error)
       }
     }
     fetchPoints();

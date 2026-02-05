@@ -62,9 +62,6 @@ function Creation() {
   }
 }
 
-  
-
-
   return (
     <div className="defi">
       <form onSubmit={defi}>

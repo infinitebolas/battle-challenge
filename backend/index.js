@@ -22,7 +22,7 @@ const verifyToken = (req, res, next) => {
     if (!token) {
         return res.status(401).json({ 
             success: false,
-            message: '🚫 Accès refusé - Token manquant',
+            message: ' Accès refusé - Token manquant',
             hint: 'Ajoutez le header: Authorization: Bearer '
         });
     }
@@ -142,10 +142,7 @@ app.post("/auth/login", async (req, res) => {
           message: "Utilisateur non trouvé"
         });
       }
-
       const user = rows;
-
-      // Comparaison du mot de passe avec bcrypt
       const passwordMatch = await bcrypt.compare(mdp, user.mdp);
 
       if (!passwordMatch) {

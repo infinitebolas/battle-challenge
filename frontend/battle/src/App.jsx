@@ -12,20 +12,15 @@ function App() {
     <BrowserRouter>
       <Header />
       <Routes>
-        {/* Route wildcard → redirection vers l'accueil */}
         <Route path='*' element={<Navigate to='/' replace />} />
 
-        {/* Routes publiques */}
         <Route path='/' element={<Accueil />} />
         <Route path='/auth' element={<Auth />} />
         <Route path='/classement' element={<Classement />} />
         <Route path='/defis' element={<Defis/>} />
-        {/* Routes protégées */}
         
 
-        <Route
-          path='/creation'
-          element={
+        <Route path='/creation' element={
             <PrivateRoute>
               <CreaDefis />
             </PrivateRoute>

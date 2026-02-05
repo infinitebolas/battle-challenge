@@ -5,7 +5,6 @@ function Header() {
   const navigate = useNavigate();
   const token = useToken(state => state.token);
   const clearToken = useToken((state) => state.clearToken);
-    //const token = localStorage.getItem("token");
     let connexion;    
     const logout = () => {
     clearToken();
