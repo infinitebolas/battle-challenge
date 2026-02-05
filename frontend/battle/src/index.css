@@ -26,11 +26,14 @@ header {
   justify-content: space-around;
   align-items: center;
   padding: 1em 2em;
+  height: 10%;
 }
 ul {
   list-style: none;
   padding: 0;
   display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 1em;
 }
 a {
@@ -72,4 +75,36 @@ nav{
 .reponse{
   height:15em;
   width: 100%;
+}
+
+table {
+    width: 60%;
+    margin: 40px auto;
+    border-collapse: collapse;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+th {
+    padding: 12px 15px;
+    text-align: left;
+    font-size: 1em;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #ddd;
+    font-size: 0.95em;
+}
+tbody tr:nth-child(1) td {
+    background-color: gold; /* rouge clair */
+}
+
+tbody tr:nth-child(2) td {
+    background-color: silver; /* vert clair */
+}
+
+tbody tr:nth-child(3) td {
+    background-color: #f38b04; /* bleu clair */
 }
