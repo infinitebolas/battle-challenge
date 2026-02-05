@@ -19,9 +19,9 @@ function App() {
         <Route path='/' element={<Accueil />} />
         <Route path='/auth' element={<Auth />} />
         <Route path='/classement' element={<Classement />} />
-
-        {/* Routes protégées */}
         <Route path='/defis' element={<Defis/>} />
+        {/* Routes protégées */}
+        
 
         <Route
           path='/creation'

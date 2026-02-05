@@ -1,25 +1,45 @@
 import useToken from './token';
-
-function parseJwt(token) {
-  if (!token) return null;
-  try {
-    const base64Payload = token.split('.')[1];
-    const payload = atob(base64Payload); // décoder base64
-    return JSON.parse(payload);
-  } catch (e) {
-    console.error("Erreur decode JWT", e);
-    return null;
-  }
-}
+import parseJwt from './dechiffrement';
+import { useState, useEffect } from "react";
 
 function Accueil() {
   const token = useToken(state => state.token);
-  const payload = parseJwt(token);
-  const username = payload?.username || "ACCUEIL";
+  const values = parseJwt(token);
+  const [points, setPoints] = useState(0);
+  const [error, setError] = useState(null);
+  const username = values?.username ;
+
+useEffect(() => {
+    async function fetchPoints() {
+      try {
+        const response = await fetch("http://localhost:3000/points", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json" ,
+          "Authorization": `Bearer ${token}`
+        },
+        body: JSON.stringify({ id_user:values.id }),
+      });
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const result = await response.json();
+        setPoints(result.value);
+      } catch (err) {
+        setError(err.message);
+      }
+    }
+    fetchPoints();
+  }, []);
+
 
   return (
     <div>
-      <h1>Bienvenue sur la plateforme de bataille, {username}</h1>
+      <h1>Bienvenue sur la plateforme de bataille {username}</h1>
+      {token && (
+        <p>nombre de points : {points}</p>
+      )}
+      
     </div>
   );
 }

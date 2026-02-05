@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import useToken from './token';
+import parseJwt from './dechiffrement'
 
 function Defi() {
   const [data, setData] = useState([]);
   const [error, setError] = useState(null);
-  const token =  useToken(state => state.token)
+  const [langage, setLangage] = useState("");
+  const [responses, setResponses] = useState({});
+  const token =  useToken(state => state.token);
   useEffect(() => {
     async function fetchDefi() {
       
@@ -14,7 +17,6 @@ function Defi() {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const result = await response.json();
-        console.log(result);
         setData(result);
       } catch (err) {
         setError(err.message);
@@ -23,6 +25,46 @@ function Defi() {
     fetchDefi();
   }, []);
 
+  async function Reponse(event, id, points) {
+    event.preventDefault()
+    const contenu= responses[id]
+    if (!contenu) {
+      alert("Aucune réponse saisie.");
+      return;
+    }
+    try {
+    const response = await fetch('http://localhost:3000/defis/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        "Authorization": `Bearer ${token}`
+      },
+      body: JSON.stringify({
+        usersub: parseJwt(token).id,
+        contenu: contenu,
+        challenge: id,
+        points: points
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert('Réponse enregistrée');
+      setResponses(prev => {
+        const updated = Object.assign({}, prev);
+        updated[id] = "";
+        return updated;
+      });
+    } else {
+      alert(data.message);
+    }
+
+  } catch (error) {
+    console.error(error);
+    alert('Erreur de connexion');
+  }
+}
   if (error) {
     return <p>Erreur : {error}</p>;
   }
@@ -42,12 +84,23 @@ function Defi() {
           <p><strong>Difficulté :</strong> {defi.difficulte}</p>
           <p><strong>Points :</strong> {defi.points}</p>
           {token && (
-            <form action="">
-              <textarea className="reponse" name="form_soumission" id={defi.id_challenge} placeholder="Entrez une réponse"></textarea>
+            <form onSubmit={(e) => Reponse(e, defi.id_challenge, defi.points)}>
+              <select name="langage" value={langage} onChange={(e) => setLangage(e.target.value)}>
+    <option value="js">JavaScript</option>
+  </select>
+              <textarea
+                className="reponse"
+                placeholder="Entrez une réponse"
+                value={responses[defi.id_challenge] || ""}
+                onChange={(e) => {
+                  const newResponses = Object.assign({}, responses);
+                  newResponses[defi.id_challenge] = e.target.value;
+                  setResponses(newResponses);
+                }}
+              />
               <button type="submit">Soumettre la réponse</button>
             </form>
           )}
-
         </div>
       ))}
     </div>
