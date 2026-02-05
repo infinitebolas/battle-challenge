@@ -98,13 +98,13 @@ td {
     font-size: 0.95em;
 }
 tbody tr:nth-child(1) td {
-    background-color: gold; /* rouge clair */
+    background-color: gold; 
 }
 
 tbody tr:nth-child(2) td {
-    background-color: silver; /* vert clair */
+    background-color: silver; 
 }
 
 tbody tr:nth-child(3) td {
-    background-color: #f38b04; /* bleu clair */
+    background-color: #f38b04; 
 }
