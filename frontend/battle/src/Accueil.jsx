@@ -6,11 +6,11 @@ function Accueil() {
   const token = useToken(state => state.token);
   const values = parseJwt(token);
   const [points, setPoints] = useState(0);
-  const [error, setError] = useState(null);
   const username = values?.username ;
 
 useEffect(() => {
     async function fetchPoints() {
+      if (!token || !values?.id) return;
       try {
         const response = await fetch("http://localhost:3000/points", {
         method: "POST",
@@ -26,8 +26,7 @@ useEffect(() => {
         const result = await response.json();
         setPoints(result.value);
       } catch (err) {
-        setError(err.message);
-        alert(error)
+        alert(err)
       }
     }
     fetchPoints();
