@@ -53,11 +53,11 @@ const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
 
 const pool = createPool({
-host:'localhost',
-user:'root',
-password:'1Motdepasse',
-database:'battlechallenge',
-port:'3307'
+host:process.env.HOST,
+user:process.env.USER,
+password:process.env.PASSWORD,
+database:process.env.DATABASE,
+port:process.env.PORT
 });
 
 
