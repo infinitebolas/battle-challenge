@@ -17,19 +17,14 @@ button {
 button:hover {
   border-color: #646cff;
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 
 .vl {
-  border-left: 6px solid green;
-  height: 100%;
+  border-left: 6px solid aquamarine;
+  height: 50%;
   position: absolute;
   left: 50%;
   margin-left: -3px;
-  top: 0;
 }
 header {
   display: flex;
@@ -77,4 +72,9 @@ form {
 
 nav{
   position: fixed;
+}
+
+.reponse{
+  height:15em;
+  width: 100%;
 }

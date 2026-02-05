@@ -21,14 +21,8 @@ function App() {
         <Route path='/classement' element={<Classement />} />
 
         {/* Routes protégées */}
-        <Route
-          path='/defis'
-          element={
-            <PrivateRoute>
-              <Defis />
-            </PrivateRoute>
-          }
-        />
+        <Route path='/defis' element={<Defis/>} />
+
         <Route
           path='/creation'
           element={

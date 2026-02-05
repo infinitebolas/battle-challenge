@@ -76,9 +76,7 @@ async function login(event) {
 
     if (data.success) {
       if (data.token) {
-        console.log(data.token)
-        setToken(data.token);
-        //localStorage.setItem("token", data.token);      
+        setToken(data.token);   
         alert('Authentification réussie');
         navigate('/');
       }

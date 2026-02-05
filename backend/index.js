@@ -46,7 +46,7 @@ const verifyToken = (req, res, next) => {
     });
 };
 app.use("/creation",verifyToken);
-app.use("/defis",verifyToken);
+app.use("/defis/soumissison",verifyToken);
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 
@@ -205,6 +205,21 @@ app.post("/creation", async (req, res) => {
     console.error(error);
     res.status(500).json({success: false, message: "Erreur base de données"
     });
+  }
+});
+
+app.get("/defis", async (req, res) => {
+  try {
+    const conn = await pool.getConnection();
+    try {
+      const rows = await conn.query("SELECT * FROM challenge");
+      res.json(rows);
+    } finally {
+      conn.release(); 
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Database error");
   }
 });
 
