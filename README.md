@@ -1,4 +1,6 @@
 CODE CHALLENGE PLATFORM
+
+
 Comment fonctionne l’application
 
 Une fois inscrit, l’utilisateur peut parcourir une liste de défis techniques, chacun ayant un niveau de difficulté.
