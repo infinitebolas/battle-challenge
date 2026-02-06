@@ -1,5 +1,4 @@
 CODE CHALLENGE PLATFORM
-
 Comment fonctionne l’application
 
 Une fois inscrit, l’utilisateur peut parcourir une liste de défis techniques, chacun ayant un niveau de difficulté.
@@ -13,13 +12,13 @@ Technologies utilisées
 
 Le projet repose sur des outils modernes et largement utilisés :
 
-- une interface utilisateur développée avec React
+Interface utilisateur développée avec React
 
-- un serveur construit autour d’une API REST
+Serveur construit autour d’une API REST
 
-- un système d’authentification sécurisé
+Authentification sécurisée
 
-- une base de données relationnelle pour stocker les informations
+Base de données relationnelle pour stocker les informations
 
 Ces choix techniques permettent d’obtenir une application stable, évolutive et proche des standards du développement web actuel.
 
@@ -28,40 +27,86 @@ Prérequis
 
 Pour faire fonctionner l’application en local, il est nécessaire d’avoir :
 
-- Node.js installé sur la machine
+Node.js installé sur la machine
 
-- React pour la partie frontend
+React pour la partie frontend
 
-- un gestionnaire de paquets comme npm ou yarn
+Un gestionnaire de paquets comme npm ou yarn
 
-- un serveur SQL opérationnel
+Un serveur SQL opérationnel (ex. MariaDB)
 
-un environnement de développement adapté
+Un environnement de développement adapté
 
 Installation
 
 Le projet se compose de deux parties : le backend et le frontend.
 
-La première étape consiste à récupérer le code source du projet.
-Une fois cela fait, il faut installer les dépendances du backend pour pouvoir exécuter le serveur.
+Backend
 
-Ensuite, une base de données PostgreSQL doit être créée afin d’accueillir les informations de l’application.
-Les paramètres de connexion doivent être configurés dans les variables d’environnement du projet.
+Récupérer le code source du backend :
 
-Après cette configuration, le backend peut être démarré pour rendre l’API disponible.
+git clone <URL_DU_PROJET_BACKEND>
+cd backend
 
-Il faut ensuite procéder de la même manière pour la partie frontend : installer les dépendances nécessaires, puis lancer l’application cliente.
 
-Une fois ces étapes réalisées, la plateforme est prête à être utilisée en local.
+Installer les dépendances :
+
+npm install
+# ou avec yarn
+yarn install
+
+
+Créer une base de données MariaDB pour l’application.
+
+Configurer les paramètres de connexion dans les variables d’environnement (.env) :
+Exemple :
+
+DB_HOST=localhost
+DB_USER=root
+DB_PASSWORD=motdepasse
+DB_NAME=code_challenge
+
+
+Lancer le serveur backend :
+
+npm start
+# ou pour le mode développement avec rechargement automatique
+npm run dev
+
+Frontend
+
+Récupérer le code source du frontend :
+
+git clone <URL_DU_PROJET_FRONTEND>
+cd frontend
+
+
+Installer les dépendances :
+
+npm install
+# ou avec yarn
+yarn install
+
+
+Lancer l’application frontend :
+
+npm start
+# ou avec yarn
+yarn start
+
+
+L’application sera accessible par défaut à l’adresse :
+
+http://localhost:5173
 
 Pistes d’amélioration
 
 Cette première version pose des bases solides, mais de nombreuses évolutions sont possibles :
 
-- exécuter automatiquement le code soumis
+Exécuter automatiquement le code soumis
 
-- prendre en charge d’autres langages de programmation
+Prendre en charge d’autres langages de programmation
 
-- ajouter des tests et validations plus avancées
+Ajouter des tests et validations plus avancées
 
-- améliorer l’interface graphique
+Améliorer l’interface graphique
