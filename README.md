@@ -54,7 +54,7 @@ cd backend
 Installer les dépendances :
 
 npm install
-# ou avec yarn
+ou avec yarn
 yarn install
 
 
@@ -72,7 +72,6 @@ DB_NAME=code_challenge
 Lancer le serveur backend :
 
 npm start
-# ou pour le mode développement avec rechargement automatique
 npm run dev
 
 Frontend
@@ -86,14 +85,12 @@ cd frontend
 Installer les dépendances :
 
 npm install
-# ou avec yarn
 yarn install
 
 
 Lancer l’application frontend :
 
 npm start
-# ou avec yarn
 yarn start
 
 
